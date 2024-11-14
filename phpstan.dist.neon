@@ -6,3 +6,7 @@ parameters:
         - public/
         - src/
         - tests/
+    ignoreErrors:
+        -
+            message: 'Property App\Entity\[a-zA-Z0-9\\]+::$[a-zA-Z0-9_]+ is never assigned [a-z]+ so it can be removed from the property type.PHPStanproperty.unusedType
+            path: src/Entity/*

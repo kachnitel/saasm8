@@ -3,7 +3,6 @@
 namespace App\Command\Entity;
 
 use App\Entity\Traits\GetterSetterCall;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -239,7 +238,6 @@ class GenerateMethodsCommand extends Command
                 $i++;
             }
 
-            // dd($lines[$i]);
             if ($lines[$i] === ' */') {
                 unset($lines[$startIndex - 2], $lines[$i]);
                 $startIndex -= 2;

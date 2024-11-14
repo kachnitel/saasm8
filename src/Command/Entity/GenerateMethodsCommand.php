@@ -3,16 +3,15 @@
 namespace App\Command\Entity;
 
 use App\Entity\Traits\GetterSetterCall;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Form\Extension\Validator\ViolationMapper\MappingRule;
 
 #[AsCommand(
     name: 'app:entity:generate-methods',
@@ -110,7 +109,7 @@ class GenerateMethodsCommand extends Command
         $io->writeln($result);
 
         if ($io->ask('Do you want to write this to the entity class?', 'yes') === 'yes') {
-            $this->writeToFile($options[$entity], $result);
+            $this->writeToFile($entity, $methodsSorted);
         }
 
         return Command::SUCCESS;
@@ -186,8 +185,81 @@ class GenerateMethodsCommand extends Command
         return $types[$type] ?? $type;
     }
 
-    private function writeToFile(string $entity, string $content): void
+
+    /**
+     * Find if a docblock exists at the top of the class (consider attributes between block and class)
+     * If it contains ant @method statements, remove them first
+     * Append new methods
+     *
+     * REVIEW: bit chaotic but it's late!
+     */
+    private function writeToFile(string $entity, array $methods): void
     {
-        // TODO:
+        $path = 'src/Entity/' . $entity . '.php';
+        $file = file_get_contents($path);
+        $lines = explode(PHP_EOL, $file);
+
+        // find where class starts - first line starting with 'class $entity' (but may continue after space)
+        foreach ($lines as $index => $line) {
+            if (str_starts_with($line, 'class ' . $entity)) {
+                $classStartIndex = $index;
+                break;
+            }
+        }
+
+        // find if there are any #[Attributes] immediately before the class
+        $attributes = [];
+        for ($i = $classStartIndex - 1; $i >= 0; $i--) {
+            if (str_starts_with($lines[$i], '#[')) {
+                $attributes[] = $lines[$i];
+            } else {
+                break;
+            }
+        }
+
+        $startIndex = $classStartIndex - count($attributes);
+
+        // remove existing @method lines
+        foreach ($lines as $index => $line) {
+            if ($index > $classStartIndex) {
+                break;
+            }
+
+            if (str_starts_with($line, ' * @method')) {
+                unset($lines[$index]);
+                $startIndex--;
+            }
+        }
+
+        // if current lines are /** and  */, remove them
+        if ($lines[$startIndex - 2] === '/**') {
+            // find next line that is not empty
+            $i = $startIndex - 1;
+            while (empty($lines[$i])) {
+                $i++;
+            }
+
+            // dd($lines[$i]);
+            if ($lines[$i] === ' */') {
+                unset($lines[$startIndex - 2], $lines[$i]);
+                $startIndex -= 2;
+            }
+        }
+
+        // insert new @method lines before the attributes or class
+        array_splice($lines, $startIndex, 0, '/**');
+        foreach ($methods as $method) {
+            $method = $this->stripHighlighting($method);
+            array_splice($lines, ++$startIndex, 0, $method);
+        }
+        array_splice($lines, ++$startIndex, 0, ' */');
+
+        // write back to file
+        file_put_contents($path, implode(PHP_EOL, $lines));
+    }
+
+    private function stripHighlighting(string $line): string
+    {
+        return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
     }
 }

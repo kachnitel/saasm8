@@ -35,7 +35,7 @@ class BillingCategory
     #[ORM\Column(nullable: true)]
     private ?float $rate = null;
 
-    #[ORM\Column(length: 6)]
+    #[ORM\Column(length: 32)]
     private ?string $color = null;
 
     /**

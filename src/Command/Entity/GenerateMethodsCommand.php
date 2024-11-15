@@ -49,7 +49,7 @@ class GenerateMethodsCommand extends Command
             $entities = $this->entityManager->getConfiguration()->getMetadataDriverImpl()
                 ->getAllClassNames();
             $options = array_combine(
-                str_replace('App\\Entity\\', '', $entities),
+                $this->stripEntityNamespace($entities),
                 $entities
             );
 
@@ -66,7 +66,10 @@ class GenerateMethodsCommand extends Command
         ];
 
         foreach ($metadata->fieldMappings as $field => $mapping) {
-            $type = $this->convertInternalType($mapping['type'], $mapping['nullable'] ?? false);
+            $type = $this->convertInternalType($mapping['type']);
+            if ($this->isPropertyNullable($entity, $field)) {
+                $type .= '|null';
+            }
 
             // * @method int getId()
             $methods['getters'][] = $this->printLine($type, '', 'get', $field);
@@ -94,7 +97,8 @@ class GenerateMethodsCommand extends Command
                 $methods['ar'][] = $this->printLine('self', $type, 'add', $singular);
                 $methods['ar'][] = $this->printLine('self', $type, 'remove', $singular);
             } else {
-                $nullableType = $mapping['nullable'] ?? false ? $type . '|null' : $type;
+                // $nullableType = $mapping['nullable'] ?? false ? $type . '|null' : $type;
+                $nullableType = $this->isPropertyNullable($entity, $field) ? $type . '|null' : $type;
                 $methods['getters'][] = $this->printLine($nullableType, '', 'get', $field);
                 $methods['setters'][] = $this->printLine('self', $nullableType, 'set', $field);
             }
@@ -145,7 +149,7 @@ class GenerateMethodsCommand extends Command
         throw new \InvalidArgumentException('Unknown plural form');
     }
 
-    private function stripEntityNamespace(string $entity): string
+    private function stripEntityNamespace(string|array $entity): string|array
     {
         return str_replace('App\\Entity\\', '', $entity);
     }
@@ -154,7 +158,7 @@ class GenerateMethodsCommand extends Command
      * Convert internal types to PHP types
      * TODO: isn't there a better way to get this information?
      */
-    private function convertInternalType(string $type, bool $nullable = false): string
+    private function convertInternalType(string $type): string
     {
         $types = [
             'datetime' => '\DateTimeInterface',
@@ -182,8 +186,7 @@ class GenerateMethodsCommand extends Command
             'set' => 'string',
         ];
 
-        $phpType = $types[$type] ?? $type;
-        return $nullable ? $phpType . '|null' : $phpType;
+        return $types[$type] ?? $type;
     }
 
 
@@ -261,5 +264,12 @@ class GenerateMethodsCommand extends Command
     private function stripHighlighting(string $line): string
     {
         return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
+    }
+
+    private function isPropertyNullable(string $entityClass, string $property): bool
+    {
+        $reflection = new \ReflectionClass('App\\Entity\\' . $entityClass);
+        $property = $reflection->getProperty($property);
+        return $property->getType()?->allowsNull() ?? false;
     }
 }

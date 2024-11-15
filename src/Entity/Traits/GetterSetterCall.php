@@ -61,6 +61,15 @@ trait GetterSetterCall
         throw new \BadMethodCallException("Method $name does not exist");
     }
 
+    public function __get(string $name): mixed
+    {
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        }
+
+        throw new \Error("Property $name does not exist");
+    }
+
     private function pluralize(string $singular): string
     {
         if (substr($singular, -1) === 'y') {

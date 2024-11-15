@@ -57,7 +57,17 @@ class GetterSetterCallTest extends TestCase
     {
         $billingCategory = new \App\Entity\BillingCategory();
         $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Method invalidMethod does not exist');
-        $billingCategory->invalidMethod();
+        $this->expectExceptionMessage('Method addInvalidMethod does not exist');
+        $billingCategory->addInvalidMethod();
+    }
+
+    public function testGetter(): void
+    {
+        $billingCategory = new \App\Entity\BillingCategory();
+        $billingCategory->setName('Test');
+        $this->assertEquals('Test', $billingCategory->name);
+
+        $this->expectException(\Error::class);
+        $billingCategory->invalidProperty;
     }
 }

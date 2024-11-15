@@ -1,0 +1,30 @@
+<div {{ attributes }}>
+  <input
+    type="text"
+    name="category"
+    id="category"
+    placeholder="Category"
+    data-model="norender|name"
+    class="{{ _errors.has('name') ? 'is-invalid' }}"
+  />
+
+  <input
+    type="color"
+    name="color"
+    id="color"
+    data-model="color"
+    class="{{ _errors.has('color') ? 'is-invalid' }}"
+  />
+
+  {% for error in _errors %}
+    <p>{{ error }}</p>
+  {% endfor %}
+
+  <button
+    type="button"
+    data-action="live#action"
+    data-live-action-param="saveCategory"
+  >
+    💾 Save Category
+  </button>
+</div>

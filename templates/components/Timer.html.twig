@@ -1,0 +1,42 @@
+<div {{ attributes }}>
+  <button
+    type="button"
+    data-action="live#action"
+    data-live-action-param="startTimer"
+    {% if timeEntry %}disabled{% endif %}
+  >
+    💻 Start
+  </button>
+
+  <button
+    type="button"
+    data-action="live#action"
+    data-live-action-param="stopTimer"
+    {% if timeEntry is null %}disabled{% endif %}
+  >
+    ⏹️ Stop
+  </button>
+
+  {% if timeEntry is not null %}
+    <twig:ActiveTimeEntry
+      billingCategory="{{ timeEntry.getBillingCategory() }}"
+      note="{{ timeEntry.getNote() }}"
+      startTime="{{ timeEntry.getStartTime() }}"
+    />
+  {% endif %}
+
+  <div>
+    <span>Log</span>
+    <ul>
+      {% for entry in timeEntries %}
+        <li>
+          <span>{{ entry.getStartTime()|date('Y-m-d H:i:s') }}</span>
+          <span>{{ entry.getEndTime()|date('Y-m-d H:i:s') }}</span>
+          {# <span>{{ entry.getDuration() }}</span> #}
+          <span>{{ entry.getBillingCategory().getName() }}</span>
+          <span>{{ entry.getNote() }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

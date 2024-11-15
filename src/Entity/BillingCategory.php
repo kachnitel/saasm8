@@ -10,11 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @method int getId()
  * @method string getName()
- * @method float getRate()
+ * @method float|null getRate()
  * @method string getColor()
  * @method Collection<int, TimeEntry> getTimeEntries()
  * @method self setName(string $name)
- * @method self setRate(float $rate)
+ * @method self setRate(float|null $rate)
  * @method self setColor(string $color)
  * @method self addTimeEntry(TimeEntry $timeEntry)
  * @method self removeTimeEntry(TimeEntry $timeEntry)

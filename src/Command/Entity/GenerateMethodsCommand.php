@@ -66,7 +66,7 @@ class GenerateMethodsCommand extends Command
         ];
 
         foreach ($metadata->fieldMappings as $field => $mapping) {
-            $type = $this->convertInternalType($mapping['type']);
+            $type = $this->convertInternalType($mapping['type'], $mapping['nullable'] ?? false);
 
             // * @method int getId()
             $methods['getters'][] = $this->printLine($type, '', 'get', $field);
@@ -94,8 +94,9 @@ class GenerateMethodsCommand extends Command
                 $methods['ar'][] = $this->printLine('self', $type, 'add', $singular);
                 $methods['ar'][] = $this->printLine('self', $type, 'remove', $singular);
             } else {
-                $methods['getters'][] = $this->printLine($type, '', 'get', $field);
-                $methods['setters'][] = $this->printLine('self', $type, 'set', $field);
+                $nullableType = $mapping['nullable'] ?? false ? $type . '|null' : $type;
+                $methods['getters'][] = $this->printLine($nullableType, '', 'get', $field);
+                $methods['setters'][] = $this->printLine('self', $nullableType, 'set', $field);
             }
         }
 
@@ -153,7 +154,7 @@ class GenerateMethodsCommand extends Command
      * Convert internal types to PHP types
      * TODO: isn't there a better way to get this information?
      */
-    private function convertInternalType(string $type): string
+    private function convertInternalType(string $type, bool $nullable = false): string
     {
         $types = [
             'datetime' => '\DateTimeInterface',
@@ -181,7 +182,8 @@ class GenerateMethodsCommand extends Command
             'set' => 'string',
         ];
 
-        return $types[$type] ?? $type;
+        $phpType = $types[$type] ?? $type;
+        return $nullable ? $phpType . '|null' : $phpType;
     }
 
 

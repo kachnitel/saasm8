@@ -9,12 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @method int getId()
  * @method \DateTimeInterface getStartTime()
- * @method \DateTimeInterface getEndTime()
- * @method string getNote()
+ * @method \DateTimeInterface|null getEndTime()
+ * @method string|null getNote()
  * @method BillingCategory getBillingCategory()
  * @method self setStartTime(\DateTimeInterface $startTime)
- * @method self setEndTime(\DateTimeInterface $endTime)
- * @method self setNote(string $note)
+ * @method self setEndTime(\DateTimeInterface|null $endTime)
+ * @method self setNote(string|null $note)
  * @method self setBillingCategory(BillingCategory $billingCategory)
  */
 #[ORM\Entity(repositoryClass: TimeEntryRepository::class)]

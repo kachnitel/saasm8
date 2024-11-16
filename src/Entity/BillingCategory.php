@@ -8,14 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @method int getId()
- * @method string getName()
- * @method float getRate()
- * @method string getColor()
+ * @method int|null getId()
+ * @method string|null getName()
+ * @method float|null getRate()
+ * @method string|null getColor()
  * @method Collection<int, TimeEntry> getTimeEntries()
- * @method self setName(string $name)
- * @method self setRate(float $rate)
- * @method self setColor(string $color)
+ * @method self setName(string|null $name)
+ * @method self setRate(float|null $rate)
+ * @method self setColor(string|null $color)
  * @method self addTimeEntry(TimeEntry $timeEntry)
  * @method self removeTimeEntry(TimeEntry $timeEntry)
  */

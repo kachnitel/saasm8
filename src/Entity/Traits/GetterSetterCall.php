@@ -70,6 +70,11 @@ trait GetterSetterCall
         throw new \Error("Property $name does not exist");
     }
 
+    public function __isset(string $name): bool
+    {
+        return property_exists($this, $name);
+    }
+
     private function pluralize(string $singular): string
     {
         if (substr($singular, -1) === 'y') {

@@ -9,6 +9,7 @@ trait GetterSetterCall
     // @phpstan-ignore missingType.iterableValue
     public function __call(string $name, array $arguments): mixed
     {
+        // REVIEW: redundant functionality with __get, enables ->getFoo() over ->foo - what for?
         if (preg_match('/^get(.+)$/', $name, $matches)) {
             $property = lcfirst($matches[1]);
             if (property_exists($this, $property)) {
@@ -68,6 +69,11 @@ trait GetterSetterCall
         }
 
         throw new \Error("Property $name does not exist");
+    }
+
+    public function __isset(string $name): bool
+    {
+        return property_exists($this, $name);
     }
 
     private function pluralize(string $singular): string

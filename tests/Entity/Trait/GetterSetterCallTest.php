@@ -70,4 +70,12 @@ class GetterSetterCallTest extends TestCase
         $this->expectException(\Error::class);
         $billingCategory->invalidProperty;
     }
+
+    public function testIsset(): void
+    {
+        $billingCategory = new \App\Entity\BillingCategory();
+        $billingCategory->setName('Test');
+        $this->assertTrue(isset($billingCategory->name));
+        $this->assertFalse(isset($billingCategory->invalidProperty));
+    }
 }

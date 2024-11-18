@@ -2,7 +2,6 @@
 
 namespace App\Command\Entity;
 
-use App\Entity\Traits\GetterSetterCall;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -14,12 +13,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:entity:generate-methods',
-    description: 'Add a short description for your command',
+    description: 'Generate getter, setter, adder and remover methods comment docblock for an entity',
 )]
 class GenerateMethodsCommand extends Command
 {
-    use GetterSetterCall;
-
     const ACTIONS = [
         'get' => '<info>%retval</info> <comment>%method</comment>()',
         'set' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
@@ -27,7 +24,7 @@ class GenerateMethodsCommand extends Command
         'remove' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
     ];
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -59,6 +56,24 @@ class GenerateMethodsCommand extends Command
         $metadata = $this->entityManager->getClassMetadata($options[$entity]);
 
         /** @see App\Entity\Traits\GetterSetterCall */
+
+        $methods = $this->generateMethods($metadata, $entity);
+
+        $result = '/**'
+            . PHP_EOL . implode(PHP_EOL, $methods)
+            . PHP_EOL . ' */';
+
+        $io->writeln($result);
+
+        if ($io->ask('Do you want to write this to the entity class?', 'yes') === 'yes') {
+            $this->writeToFile($entity, $methods);
+        }
+
+        return Command::SUCCESS;
+    }
+
+    protected function generateMethods(Mapping\ClassMetadata $metadata, string $entity): array
+    {
         $methods = [
             'getters' => [],
             'setters' => [],
@@ -104,19 +119,18 @@ class GenerateMethodsCommand extends Command
             }
         }
 
-        // getters, setters, adders+removers
-        $methodsSorted = array_merge($methods['getters'], $methods['setters'], $methods['ar']);
-        $result = '/**'
-            . PHP_EOL . implode(PHP_EOL, $methodsSorted)
-            . PHP_EOL . ' */';
+        // Flatten in order - getters, setters, adders+removers
+        return array_merge($methods['getters'], $methods['setters'], $methods['ar']);
+    }
 
-        $io->writeln($result);
+    protected function stripEntityNamespace(string|array $entity): string|array
+    {
+        return str_replace('App\\Entity\\', '', $entity);
+    }
 
-        if ($io->ask('Do you want to write this to the entity class?', 'yes') === 'yes') {
-            $this->writeToFile($entity, $methodsSorted);
-        }
-
-        return Command::SUCCESS;
+    protected function stripHighlighting(string $line): string
+    {
+        return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
     }
 
     private function printLine(
@@ -147,11 +161,6 @@ class GenerateMethodsCommand extends Command
         }
 
         throw new \InvalidArgumentException('Unknown plural form');
-    }
-
-    private function stripEntityNamespace(string|array $entity): string|array
-    {
-        return str_replace('App\\Entity\\', '', $entity);
     }
 
     /**
@@ -259,11 +268,6 @@ class GenerateMethodsCommand extends Command
 
         // write back to file
         file_put_contents($path, implode(PHP_EOL, $lines));
-    }
-
-    private function stripHighlighting(string $line): string
-    {
-        return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
     }
 
     private function isPropertyNullable(string $entityClass, string $property): bool

@@ -8,16 +8,16 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @method int|null getId()
- * @method string|null getName()
- * @method float|null getRate()
- * @method string|null getColor()
+ * @method int|null                   getId()
+ * @method string|null                getName()
+ * @method float|null                 getRate()
+ * @method string|null                getColor()
  * @method Collection<int, TimeEntry> getTimeEntries()
- * @method self setName(string|null $name)
- * @method self setRate(float|null $rate)
- * @method self setColor(string|null $color)
- * @method self addTimeEntry(TimeEntry $timeEntry)
- * @method self removeTimeEntry(TimeEntry $timeEntry)
+ * @method self                       setName(string|null $name)
+ * @method self                       setRate(float|null $rate)
+ * @method self                       setColor(string|null $color)
+ * @method self                       addTimeEntry(TimeEntry $timeEntry)
+ * @method self                       removeTimeEntry(TimeEntry $timeEntry)
  */
 #[ORM\Entity(repositoryClass: BillingCategoryRepository::class)]
 class BillingCategory

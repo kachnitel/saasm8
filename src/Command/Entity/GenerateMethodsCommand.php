@@ -2,7 +2,6 @@
 
 namespace App\Command\Entity;
 
-use App\Entity\Traits\GetterSetterCall;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -14,20 +13,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:entity:generate-methods',
-    description: 'Add a short description for your command',
+    description: 'Generate getter, setter, adder and remover methods comment docblock for an entity',
 )]
 class GenerateMethodsCommand extends Command
 {
-    use GetterSetterCall;
-
-    const ACTIONS = [
+    public const ACTIONS = [
         'get' => '<info>%retval</info> <comment>%method</comment>()',
         'set' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
         'add' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
         'remove' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
     ];
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -59,6 +56,23 @@ class GenerateMethodsCommand extends Command
         $metadata = $this->entityManager->getClassMetadata($options[$entity]);
 
         /** @see App\Entity\Traits\GetterSetterCall */
+        $methods = $this->generateMethods($metadata, $entity);
+
+        $result = '/**'
+            . PHP_EOL . implode(PHP_EOL, $methods)
+            . PHP_EOL . ' */';
+
+        $io->writeln($result);
+
+        if ('yes' === $io->ask('Do you want to write this to the entity class?', 'yes')) {
+            $this->writeToFile($entity, $methods);
+        }
+
+        return Command::SUCCESS;
+    }
+
+    protected function generateMethods(Mapping\ClassMetadata $metadata, string $entity): array
+    {
         $methods = [
             'getters' => [],
             'setters' => [],
@@ -74,7 +88,7 @@ class GenerateMethodsCommand extends Command
             // * @method int getId()
             $methods['getters'][] = $this->printLine($type, '', 'get', $field);
 
-            if ($field === 'id') {
+            if ('id' === $field) {
                 continue;
             }
 
@@ -104,19 +118,18 @@ class GenerateMethodsCommand extends Command
             }
         }
 
-        // getters, setters, adders+removers
-        $methodsSorted = array_merge($methods['getters'], $methods['setters'], $methods['ar']);
-        $result = '/**'
-            . PHP_EOL . implode(PHP_EOL, $methodsSorted)
-            . PHP_EOL . ' */';
+        // Flatten in order - getters, setters, adders+removers
+        return array_merge($methods['getters'], $methods['setters'], $methods['ar']);
+    }
 
-        $io->writeln($result);
+    protected function stripEntityNamespace(string|array $entity): string|array
+    {
+        return str_replace('App\\Entity\\', '', $entity);
+    }
 
-        if ($io->ask('Do you want to write this to the entity class?', 'yes') === 'yes') {
-            $this->writeToFile($entity, $methodsSorted);
-        }
-
-        return Command::SUCCESS;
+    protected function stripHighlighting(string $line): string
+    {
+        return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
     }
 
     private function printLine(
@@ -138,20 +151,15 @@ class GenerateMethodsCommand extends Command
 
     private function pluralToSingular(string $plural): string
     {
-        if (substr($plural, -3) === 'ies') {
+        if ('ies' === substr($plural, -3)) {
             return substr($plural, 0, -3) . 'y';
         }
 
-        if (substr($plural, -1) === 's') {
+        if ('s' === substr($plural, -1)) {
             return substr($plural, 0, -1);
         }
 
         throw new \InvalidArgumentException('Unknown plural form');
-    }
-
-    private function stripEntityNamespace(string|array $entity): string|array
-    {
-        return str_replace('App\\Entity\\', '', $entity);
     }
 
     /**
@@ -189,11 +197,10 @@ class GenerateMethodsCommand extends Command
         return $types[$type] ?? $type;
     }
 
-
     /**
      * Find if a docblock exists at the top of the class (consider attributes between block and class)
      * If it contains ant @method statements, remove them first
-     * Append new methods
+     * Append new methods.
      *
      * REVIEW: bit chaotic but it's late!
      */
@@ -213,7 +220,7 @@ class GenerateMethodsCommand extends Command
 
         // find if there are any #[Attributes] immediately before the class
         $attributes = [];
-        for ($i = $classStartIndex - 1; $i >= 0; $i--) {
+        for ($i = $classStartIndex - 1; $i >= 0; --$i) {
             if (str_starts_with($lines[$i], '#[')) {
                 $attributes[] = $lines[$i];
             } else {
@@ -231,19 +238,19 @@ class GenerateMethodsCommand extends Command
 
             if (str_starts_with($line, ' * @method')) {
                 unset($lines[$index]);
-                $startIndex--;
+                --$startIndex;
             }
         }
 
         // if current lines are /** and  */, remove them
-        if ($lines[$startIndex - 2] === '/**') {
+        if ('/**' === $lines[$startIndex - 2]) {
             // find next line that is not empty
             $i = $startIndex - 1;
             while (empty($lines[$i])) {
-                $i++;
+                ++$i;
             }
 
-            if ($lines[$i] === ' */') {
+            if (' */' === $lines[$i]) {
                 unset($lines[$startIndex - 2], $lines[$i]);
                 $startIndex -= 2;
             }
@@ -261,15 +268,11 @@ class GenerateMethodsCommand extends Command
         file_put_contents($path, implode(PHP_EOL, $lines));
     }
 
-    private function stripHighlighting(string $line): string
-    {
-        return str_replace(['<info>', '</info>', '<comment>', '</comment>'], '', $line);
-    }
-
     private function isPropertyNullable(string $entityClass, string $property): bool
     {
         $reflection = new \ReflectionClass('App\\Entity\\' . $entityClass);
         $property = $reflection->getProperty($property);
+
         return $property->getType()?->allowsNull() ?? false;
     }
 }

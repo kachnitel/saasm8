@@ -20,13 +20,14 @@ trait GetterSetterCall
         if (preg_match('/^set(.+)$/', $name, $matches)) {
             $property = lcfirst($matches[1]);
 
-            if ($property === 'id') {
+            if ('id' === $property) {
                 throw new \Error("Cannot set property $property");
             }
 
             // ensure property isn't a collection - we only want add/remove methods to be called
             if (property_exists($this, $property) && !($this->$property instanceof Collection)) {
                 $this->$property = $arguments[0];
+
                 return $this;
             }
         }
@@ -39,7 +40,8 @@ trait GetterSetterCall
                 try {
                     $method = 'set' . $this->getClass();
                     $arguments[0]->$method($this);
-                } catch (\Error $e) {}
+                } catch (\Error $e) {
+                }
 
                 return $this;
             }
@@ -53,7 +55,8 @@ trait GetterSetterCall
                 try {
                     $method = 'set' . $this->getClass();
                     $arguments[0]->$method(null);
-                } catch (\Error $e) {}
+                } catch (\Error $e) {
+                }
 
                 return $this;
             }
@@ -78,7 +81,7 @@ trait GetterSetterCall
 
     private function pluralize(string $singular): string
     {
-        if (substr($singular, -1) === 'y') {
+        if ('y' === substr($singular, -1)) {
             return substr($singular, 0, -1) . 'ies';
         }
 

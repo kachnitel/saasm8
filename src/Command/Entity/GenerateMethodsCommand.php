@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GenerateMethodsCommand extends Command
 {
-    const ACTIONS = [
+    public const ACTIONS = [
         'get' => '<info>%retval</info> <comment>%method</comment>()',
         'set' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
         'add' => '<info>self</info> <comment>%method</comment>(<info>%argType</info> $%property)',
@@ -56,7 +56,6 @@ class GenerateMethodsCommand extends Command
         $metadata = $this->entityManager->getClassMetadata($options[$entity]);
 
         /** @see App\Entity\Traits\GetterSetterCall */
-
         $methods = $this->generateMethods($metadata, $entity);
 
         $result = '/**'
@@ -65,7 +64,7 @@ class GenerateMethodsCommand extends Command
 
         $io->writeln($result);
 
-        if ($io->ask('Do you want to write this to the entity class?', 'yes') === 'yes') {
+        if ('yes' === $io->ask('Do you want to write this to the entity class?', 'yes')) {
             $this->writeToFile($entity, $methods);
         }
 
@@ -89,7 +88,7 @@ class GenerateMethodsCommand extends Command
             // * @method int getId()
             $methods['getters'][] = $this->printLine($type, '', 'get', $field);
 
-            if ($field === 'id') {
+            if ('id' === $field) {
                 continue;
             }
 
@@ -152,11 +151,11 @@ class GenerateMethodsCommand extends Command
 
     private function pluralToSingular(string $plural): string
     {
-        if (substr($plural, -3) === 'ies') {
+        if ('ies' === substr($plural, -3)) {
             return substr($plural, 0, -3) . 'y';
         }
 
-        if (substr($plural, -1) === 's') {
+        if ('s' === substr($plural, -1)) {
             return substr($plural, 0, -1);
         }
 
@@ -198,11 +197,10 @@ class GenerateMethodsCommand extends Command
         return $types[$type] ?? $type;
     }
 
-
     /**
      * Find if a docblock exists at the top of the class (consider attributes between block and class)
      * If it contains ant @method statements, remove them first
-     * Append new methods
+     * Append new methods.
      *
      * REVIEW: bit chaotic but it's late!
      */
@@ -222,7 +220,7 @@ class GenerateMethodsCommand extends Command
 
         // find if there are any #[Attributes] immediately before the class
         $attributes = [];
-        for ($i = $classStartIndex - 1; $i >= 0; $i--) {
+        for ($i = $classStartIndex - 1; $i >= 0; --$i) {
             if (str_starts_with($lines[$i], '#[')) {
                 $attributes[] = $lines[$i];
             } else {
@@ -240,19 +238,19 @@ class GenerateMethodsCommand extends Command
 
             if (str_starts_with($line, ' * @method')) {
                 unset($lines[$index]);
-                $startIndex--;
+                --$startIndex;
             }
         }
 
         // if current lines are /** and  */, remove them
-        if ($lines[$startIndex - 2] === '/**') {
+        if ('/**' === $lines[$startIndex - 2]) {
             // find next line that is not empty
             $i = $startIndex - 1;
             while (empty($lines[$i])) {
-                $i++;
+                ++$i;
             }
 
-            if ($lines[$i] === ' */') {
+            if (' */' === $lines[$i]) {
                 unset($lines[$startIndex - 2], $lines[$i]);
                 $startIndex -= 2;
             }
@@ -274,6 +272,7 @@ class GenerateMethodsCommand extends Command
     {
         $reflection = new \ReflectionClass('App\\Entity\\' . $entityClass);
         $property = $reflection->getProperty($property);
+
         return $property->getType()?->allowsNull() ?? false;
     }
 }

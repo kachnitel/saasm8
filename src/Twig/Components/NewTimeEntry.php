@@ -6,6 +6,7 @@ use App\Entity\BillingCategory;
 use App\Entity\TimeEntry;
 use App\Repository\BillingCategoryRepository;
 use App\Repository\TimeEntryRepository;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -35,6 +36,7 @@ final class NewTimeEntry
 
     #[LiveProp(writable: true)]
     #[NotNull]
+    #[GreaterThan(propertyPath: 'startTime')]
     public ?\DateTimeInterface $endTime = null;
 
     #[LiveProp(writable: true)]

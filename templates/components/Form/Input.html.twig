@@ -1,0 +1,16 @@
+{% props error = null %}
+
+<span{{ attributes }}>
+  {% if attributes.all['title'] is defined %}
+    <label for="{{ attributes.all['title'] }}">{{ attributes.all['title'] }}</label>
+  {% endif %}
+
+  <input
+    {{- attributes.nested('input') -}}
+
+    {%- if error -%}
+      data-error="{{ error }}"
+      data-is-invalid
+    {%- endif -%}
+  />
+</span>

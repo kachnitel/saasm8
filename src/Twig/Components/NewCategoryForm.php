@@ -28,7 +28,8 @@ class NewCategoryForm
     #[CssColor]
     public string $color = '#000';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->color = $this->getRandomColor();
     }
 

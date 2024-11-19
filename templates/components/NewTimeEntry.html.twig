@@ -1,3 +1,53 @@
 <div{{ attributes }}>
-    <!-- component html -->
+  <input
+    data-model="startTime"
+    {# data-action="live#update" #}
+    type="datetime"
+    title="Start time"
+  />
+
+  <input
+    data-model="endTime"
+    type="datetime"
+    title="End time"
+  />
+
+  <input
+    data-model="note"
+    type="text"
+    title="Note"
+  />
+
+  <select
+    data-model="billingCategory"
+    title="Billing category"
+  >
+    {% for category in billingCategories %}
+      <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+  </select>
+
+  <div>
+    <button
+      data-action="live#action"
+      data-live-action-param="start"
+      title="Start"
+    > ▶ Start
+    </button>
+
+    <button
+      data-action="live#action"
+      data-live-action-param="stop"
+      title="Stop"
+    > ■ Stop
+    </button>
+
+    <button
+      data-action="live#action"
+      data-live-action-param="save"
+      title="Save"
+    > 💾 Save
+    </button>
+  </div>
+  </div>
 </div>

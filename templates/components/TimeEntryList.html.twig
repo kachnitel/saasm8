@@ -1,9 +1,9 @@
 <div{{ attributes }}>
-    <ul>
-        {% for timeEntry in this.timeEntries %}
-            <li>
-                <twig:TimeEntry timeEntry="{{ timeEntry }}" />
-            </li>
-        {% endfor %}
-    </ul>
+  <ul>
+    {% for timeEntry in timeEntries %}
+      <li>
+        <twig:TimeEntry timeEntry="{{ timeEntry }}" />
+      </li>
+    {% endfor %}
+  </ul>
 </div>

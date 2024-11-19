@@ -1,19 +1,15 @@
 <div {{ attributes }}>
-  <input
-    type="text"
-    name="category"
-    id="category"
-    placeholder="Category"
-    data-model="norender|name"
-    class="{{ _errors.has('name') ? 'is-invalid' }}"
+  <twig:Form:Input
+    input:data-model="norender|name"
+    title="Category"
+    error="{{ _errors.get('name') }}"
   />
 
-  <input
-    type="color"
-    name="color"
-    id="color"
-    data-model="color"
-    class="{{ _errors.has('color') ? 'is-invalid' }}"
+  <twig:Form:Input
+    input:data-model="color"
+    input:type="color"
+    title="Color"
+    error="{{ _errors.get('color') }}"
   />
 
   {% for error in _errors %}

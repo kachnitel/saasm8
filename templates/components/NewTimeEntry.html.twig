@@ -25,7 +25,18 @@
     error="{{ _errors.get('billingCategory') }}"
   />
 
-  <twig:NewCategoryForm />
+  <twig:Generic:DialogTrigger
+    dialogId="newCategoryDialog"
+    label="New category"
+  />
+
+  <twig:Generic:Dialog
+    id="newCategoryDialog"
+    size="sm"
+    label="New category"
+  >
+    <twig:NewCategoryForm />
+  </twig:Generic:Dialog>
 
   <div>
     <button

@@ -1,0 +1,43 @@
+{#
+ # @param size string 'sm', 'lg', 'xl' REVIEW: based on BS modal, update for dialog
+ # @param label string
+ # @param fullscreen bool|string use without value for true, or with 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down' for breakpoint specific
+ # @param dialogClass string Replaces default dialog class including size and fullscreen classes
+ #}
+
+{% props id, size = null, label = "", fullscreen = false, dialogClass = null %}
+
+{# {% set dialogClass = dialogClass ? dialogClass : 'modal-dialog'
+  ~ (fullscreen is same as(true) ? ' modal-fullscreen' : '')
+  ~ (fullscreen and fullscreen is not same as(true) ? ' modal-fullscreen-' ~ fullscreen : '')
+%} #}
+
+<dialog
+  id="{{ id }}"
+  aria-labelledby="{{ id }}Label"
+  class="{{ size ? 'dialog-' ~ size }}{{ attributes.render('class') }}"
+  {{ attributes.defaults(stimulus_controller('components--dialog')) }}
+>
+  <div class="dialog-content">
+    <div class="">
+      <h5 class="dialog-title" id="{{ id }}Label">{{ label }}</h5>
+      <button
+        type="button"
+        onclick="document.getElementById('{{ id }}').close();"
+        aria-label="Close"
+      >&#x274C;</button>
+    </div>
+    <div class="dialog-body">
+      {% block content %}{% endblock %}
+    </div>
+    <div class="dialog-footer">
+      {% block footer %}
+        <button
+          type="button"
+          class="dialog-close"
+          onclick="document.getElementById('{{ id }}').close();"
+        >Close</button>
+      {% endblock %}
+    </div>
+  </div>
+</dialog>

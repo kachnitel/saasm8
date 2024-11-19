@@ -6,17 +6,6 @@ use App\Repository\TimeEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @method int|null                getId()
- * @method \DateTimeInterface|null getStartTime()
- * @method \DateTimeInterface|null getEndTime()
- * @method string|null             getNote()
- * @method BillingCategory|null    getBillingCategory()
- * @method self                    setStartTime(\DateTimeInterface|null $startTime)
- * @method self                    setEndTime(\DateTimeInterface|null $endTime)
- * @method self                    setNote(string|null $note)
- * @method self                    setBillingCategory(BillingCategory|null $billingCategory)
- */
 #[ORM\Entity(repositoryClass: TimeEntryRepository::class)]
 class TimeEntry
 {

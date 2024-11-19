@@ -9,6 +9,8 @@ use App\Repository\TimeEntryRepository;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -93,5 +95,11 @@ final class NewTimeEntry
     public function getBillingCategories(): array
     {
         return $this->billingCategoryRepo->findAll();
+    }
+
+    #[LiveListener('billing-category:created')]
+    public function onBillingCategoryCreated(#[LiveArg] BillingCategory $category): void
+    {
+        $this->billingCategory = $category;
     }
 }

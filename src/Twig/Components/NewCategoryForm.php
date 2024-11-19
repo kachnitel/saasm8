@@ -44,7 +44,7 @@ class NewCategoryForm
 
         $repository->save($category);
 
-        $this->emit('category:created', [
+        $this->emit('billing-category:created', [
             'category' => $category->getId()
         ]);
 

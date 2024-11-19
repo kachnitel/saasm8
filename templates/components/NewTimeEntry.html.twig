@@ -2,13 +2,13 @@
   <input
     data-model="startTime"
     {# data-action="live#update" #}
-    type="datetime"
+    {# type="datetime-local" TODO: The specified value "2024-11-19T00:59:08+00:00" does not conform to the required format.  The format is "yyyy-MM-ddThh:mm" followed by optional ":ss" or ":ss.SSS". #}
     title="Start time"
   />
 
   <input
     data-model="endTime"
-    type="datetime"
+    {# type="datetime-local" TODO: must format for html5  #}
     title="End time"
   />
 
@@ -26,6 +26,8 @@
       <option value="{{ category.id }}">{{ category.name }}</option>
     {% endfor %}
   </select>
+
+  <twig:NewCategoryForm />
 
   <div>
     <button

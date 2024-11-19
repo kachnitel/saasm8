@@ -1,0 +1,5 @@
+input[data-error],
+textarea[data-error],
+select[data-error] {
+  border-color: red;
+}

@@ -1,0 +1,14 @@
+{% props timeEntry %}
+
+<div{{ attributes }}>
+    {# show start, ?end, note and category #}
+    <div>
+        <span>🕒 {{ timeEntry.startTime|date('Y-m-d H:i') }}
+        {% if timeEntry.endTime %}
+            <span>🕘 {{ timeEntry.endTime|date('Y-m-d H:i') }}</span>
+        {% endif %}
+        <span>📝 {{ timeEntry.note }}</span>
+        {{ dump(timeEntry.billingCategory) }}
+        {# <span>🏷️ {{ timeEntry.billingCategory.getName }}</span> #}
+    </div>
+</div>

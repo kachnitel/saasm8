@@ -60,4 +60,14 @@
     > 💾 Save
     </button>
   </div>
+
+  <div id="current-time">
+    {{ "now"|date("Y-m-d H:i:s") }}
+  </div>
+
+  <script>
+    setInterval(function() {
+      document.getElementById('current-time').innerText = new Date().toLocaleString();
+    }, 1000);
+  </script>
 </div>

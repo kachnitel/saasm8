@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 class TimeEntry
 {
     use Traits\IdTrait;
+    use Traits\GSAR\TimeEntry;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $startTime = null;
@@ -24,51 +25,15 @@ class TimeEntry
     #[ORM\JoinColumn(nullable: false)]
     private ?BillingCategory $billingCategory = null;
 
-    public function getStartTime(): ?\DateTimeInterface
+    public function getDuration(): \DateInterval
     {
-        return $this->startTime;
+        return $this->startTime->diff($this->endTime);
     }
 
-    public function setStartTime(?\DateTimeInterface $startTime): self
+    public function getDurationInSeconds(): int
     {
-        $this->startTime = $startTime;
-
-        return $this;
-    }
-
-    public function getEndTime(): ?\DateTimeInterface
-    {
-        return $this->endTime;
-    }
-
-    public function setEndTime(?\DateTimeInterface $endTime): self
-    {
-        $this->endTime = $endTime;
-
-        return $this;
-    }
-
-    public function getNote(): ?string
-    {
-        return $this->note;
-    }
-
-    public function setNote(?string $note): self
-    {
-        $this->note = $note;
-
-        return $this;
-    }
-
-    public function getBillingCategory(): ?BillingCategory
-    {
-        return $this->billingCategory;
-    }
-
-    public function setBillingCategory(?BillingCategory $billingCategory): self
-    {
-        $this->billingCategory = $billingCategory;
-
-        return $this;
+        return \DateTimeImmutable::createFromFormat('U', '0')
+            ->add($this->getDuration())
+            ->getTimestamp();
     }
 }

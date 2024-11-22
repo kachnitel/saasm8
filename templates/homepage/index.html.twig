@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}G'day!{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/calendar.css') }}">
+{% endblock %}
+
+{% block body %}
+  <twig:TimeTracker />
+  <twig:TimeEntryCalendar
+    style="max-width: 75%; margin: 0 auto; max-height: 650px; overflow-y: auto;"
+  />
+{% endblock %}

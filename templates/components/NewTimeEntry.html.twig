@@ -1,0 +1,73 @@
+<div{{ attributes }}>
+  {# type="datetime-local" TODO: The specified value "2024-11-19T00:59:08+00:00" does not conform to the required format.  The format is "yyyy-MM-ddThh:mm" followed by optional ":ss" or ":ss.SSS". #}
+  <twig:Form:Input
+    input:data-model="startTime"
+    title="Start time"
+    error="{{ _errors.get('startTime') }}"
+  />
+
+  <twig:Form:Input
+    input:data-model="endTime"
+    title="End time"
+    error="{{ _errors.get('endTime') }}"
+  />
+
+  <twig:Form:Input
+    input:data-model="note"
+    title="Note"
+    error="{{ _errors.get('note') }}"
+  />
+
+  <twig:Form:Select
+    select:data-model="billingCategory"
+    title="Billing category"
+    options="{{ billingCategories|map(category => ({ value: category.id, label: category.name })) }}"
+    error="{{ _errors.get('billingCategory') }}"
+  />
+
+  <twig:Generic:DialogTrigger
+    dialogId="newCategoryDialog"
+    label="New category"
+  />
+
+  <twig:Generic:Dialog
+    id="newCategoryDialog"
+    size="sm"
+    label="New category"
+  >
+    <twig:NewCategoryForm />
+  </twig:Generic:Dialog>
+
+  <div>
+    <button
+      data-action="live#action"
+      data-live-action-param="start"
+      title="Start"
+    > ▶ Start
+    </button>
+
+    <button
+      data-action="live#action"
+      data-live-action-param="stop"
+      title="Stop"
+    > ■ Stop
+    </button>
+
+    <button
+      data-action="live#action"
+      data-live-action-param="save"
+      title="Save"
+    > 💾 Save
+    </button>
+  </div>
+
+  <div id="current-time">
+    {{ "now"|date("Y-m-d H:i:s") }}
+  </div>
+
+  <script>
+    setInterval(function() {
+      document.getElementById('current-time').innerText = new Date().toLocaleString();
+    }, 1000);
+  </script>
+</div>

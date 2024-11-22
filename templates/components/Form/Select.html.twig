@@ -1,0 +1,31 @@
+{#
+ # @param array options [{ value: string, label: string }]
+ # @param ?string error
+  # @param bool showEmptyOption
+  # @param string emptyOptionTitle
+  # @param string emptyOptionValue
+ #}
+{% props options, error = null, showEmptyOption = true, emptyOptionTitle = 'Select an option', emptyOptionValue = '' %}
+
+<span {{ attributes }}>
+  {% if attributes.all['title'] is defined %}
+    <label for="{{ attributes.all['title'] }}">{{ attributes.all['title'] }}</label>
+  {% endif %}
+
+  <select
+    {{- attributes.nested('select') -}}
+
+    {%- if error -%}
+      data-error="{{ error }}"
+      data-is-invalid
+    {%- endif -%}
+  >
+    {% if showEmptyOption %}
+      <option value="{{ emptyOptionValue }}">{{ emptyOptionTitle }}</option>
+    {% endif %}
+
+    {% for option in options %}
+      <option value="{{ option.value }}">{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</span>

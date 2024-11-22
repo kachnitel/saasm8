@@ -1,0 +1,26 @@
+<div {{ attributes }}>
+  <twig:Form:Input
+    input:data-model="norender|name"
+    title="Category"
+    error="{{ _errors.get('name') }}"
+  />
+
+  <twig:Form:Input
+    input:data-model="color"
+    input:type="color"
+    title="Color"
+    error="{{ _errors.get('color') }}"
+  />
+
+  {% for error in _errors %}
+    <p>{{ error }}</p>
+  {% endfor %}
+
+  <button
+    type="button"
+    data-action="live#action"
+    data-live-action-param="saveCategory"
+  >
+    💾 Save Category
+  </button>
+</div>

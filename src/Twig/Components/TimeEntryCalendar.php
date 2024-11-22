@@ -18,12 +18,13 @@ final class TimeEntryCalendar
     #[LiveProp(writable: true)]
     public ?int $month = null;
 
-    public function __construct(private TimeEntryRepository $timeEntryRepo) {
-        if ($this->year === null) {
+    public function __construct(private TimeEntryRepository $timeEntryRepo)
+    {
+        if (null === $this->year) {
             $this->year = (int) date('Y');
         }
 
-        if ($this->month === null) {
+        if (null === $this->month) {
             $this->month = (int) date('m');
         }
     }

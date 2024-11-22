@@ -34,6 +34,6 @@ final class TimeEntryList
     public function onTimeEntrySaved(): void
     {
         // This method is called when a new time entry is saved
-        $this->newEntryCount++;
+        ++$this->newEntryCount;
     }
 }

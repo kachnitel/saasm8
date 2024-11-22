@@ -1,0 +1,21 @@
+<div{{ attributes }}>
+  <h1>{{ year }}-{{ month }}</h1>
+  {% set entriesByDay = this.entriesByDay %}
+
+  <twig:Generic:Calendar year="{{ year }}" month="{{ month }}" minDayHeight="100">
+    <twig:block name="dayContent">
+      {% if entriesByDay[date] is defined %}
+        <p>Total time: {{ entriesByDay[date]|map(entry => entry.durationInSeconds)|reduce((carry, duration) => carry + duration, 0) }}</p>
+        {% for entry in entriesByDay[date] %}
+          <div>
+            <p>{{ entry.startTime|date('H:i') }} - {{ entry.endTime|date('H:i') }}</p>
+            <p>{{ entry.durationInSeconds }}</p>
+            <p>{{ entry.note }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No entries</p>
+      {% endif %}
+    </twig:block>
+  </twig:Generic:Calendar>
+</div>

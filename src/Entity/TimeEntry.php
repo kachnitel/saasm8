@@ -35,4 +35,16 @@ class TimeEntry
     #[ORM\ManyToOne(inversedBy: 'timeEntries')]
     #[ORM\JoinColumn(nullable: false)]
     private ?BillingCategory $billingCategory = null;
+
+    public function getDuration(): \DateInterval
+    {
+        return $this->startTime->diff($this->endTime);
+    }
+
+    public function getDurationInSeconds(): int
+    {
+        return \DateTimeImmutable::createFromFormat('U', '0')
+            ->add($this->getDuration())
+            ->getTimestamp();
+    }
 }

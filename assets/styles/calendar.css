@@ -1,0 +1,36 @@
+.calendar {
+  --day-padding: 0.5rem;
+
+  .calendar-header,
+  .calendar-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .day {
+    width: calc(100% / 7);
+    padding: var(--day-padding);
+    display: inline-flex;
+    flex-direction: column;
+    border: 1px solid var(--gray-800);
+
+    .dayNumber {
+      font-weight: bold;
+      border-bottom: 1px ridge var(--gray-800);
+    }
+
+    &.weekend .dayNumber {
+      color: var(--gray-500);
+    }
+
+    &.today {
+      border-color: var(--blue-500);
+
+      .dayNumber {
+        color: var(--blue-300);
+        border-bottom-color: var(--blue-500);
+      }
+    }
+  }
+}

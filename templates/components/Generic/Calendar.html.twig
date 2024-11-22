@@ -1,0 +1,53 @@
+{% props year, month, minDayHeight = 100 %}
+
+{#
+ # TODO:
+ # - Review including CSS in the component. Needs to be included per page as is.
+ # - Use nested attributes to allow for custom classes.
+ #}
+
+<div{{ attributes.defaults({
+  class: 'calendar'
+}) }}>
+  <div class="calendar-header">
+    {% set dayWidth = 100 / 7 %}
+    <div class="day">Mon</div>
+    <div class="day">Tue</div>
+    <div class="day">Wed</div>
+    <div class="day">Thu</div>
+    <div class="day">Fri</div>
+    <div class="day weekend">Sat</div>
+    <div class="day weekend">Sun</div>
+  </div>
+
+  {# 1 = Monday, 7 = Sunday #}
+  {% set firstDayWeekdayNumeric = (year ~ '-' ~ month ~ '-01')|date('N') %}
+  {% set daysInMonth = (year ~ '-' ~ month ~ '-01')|date('t') %}
+
+  {% set offset = firstDayWeekdayNumeric - 1 %}
+  <div class="calendar-body">
+    {% for dayOfMonth in 1..daysInMonth %}
+      {% set date = year ~ '-' ~ month ~ '-' ~ (dayOfMonth < 10 ? ('0' ~ dayOfMonth) : dayOfMonth) %}
+      {% set dayOfWeek = date|date('N') %}
+      {% set today = date|date('Y-m-d') == date()|date('Y-m-d') %}
+
+      {% set classes = ['day'] %}
+      {% if dayOfWeek == 6 or dayOfWeek == 7 %}
+        {% set classes = classes|merge(['weekend']) %}
+      {% endif %}
+      {% if today %}
+        {% set classes = classes|merge(['today']) %}
+      {% endif %}
+      {% set class = classes|join(' ') %}
+
+      {% block day %}
+        <div class="{{ class }}" style="{{ dayOfMonth == 1 ? 'margin-left: ' ~ (offset * dayWidth) ~ '%;' }}">
+          <div class="dayNumber">{{ dayOfMonth }}</div>
+          <div class="dayContent" style="{{ minDayHeight > 0 ? 'min-height: ' ~ minDayHeight ~ 'px;' }}">
+            {% block dayContent %}{% endblock %}
+          </div>
+        </div>
+      {% endblock %}
+    {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,39 @@
+@import url('calendar.css');
+
+.calendar {
+  .entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid var(--gray-400);
+    border-radius: 5px;
+    background-color: var(--gray-800);
+    color: var(--text-color);
+
+    & > * {
+      margin: 0 5px;
+    }
+  }
+
+  .entry .duration {
+    font-weight: bold;
+    /* color: var(--blue-400); */
+  }
+
+  .entry .note {
+    font-size: 0.9em;
+    color: var(--gray-300);
+    flex-grow: 1;
+    text-align: right;
+  }
+
+  .entry .billingCategory {
+    font-size: 0.9em;
+    padding: 3px;
+    border-radius: 3px;
+    /* TODO: badge component */
+    /* color: attr(data-color color); not widely supported https://developer.mozilla.org/en-US/docs/Web/CSS/attr#browser_compatibility */
+  }
+}

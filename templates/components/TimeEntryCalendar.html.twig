@@ -7,10 +7,19 @@
       {% if entriesByDay[date] is defined %}
         <p>Total time: {{ entriesByDay[date]|map(entry => entry.durationInSeconds)|reduce((carry, duration) => carry + duration, 0) }}</p>
         {% for entry in entriesByDay[date] %}
-          <div>
-            <p>{{ entry.startTime|date('H:i') }} - {{ entry.endTime|date('H:i') }}</p>
-            <p>{{ entry.durationInSeconds }}</p>
-            <p>{{ entry.note }}</p>
+          <div class="entry">
+            <span
+              class="duration"
+              title="{{ entry.startTime|date('H:i:s') }} - {{ entry.endTime|date('H:i:s') }}"
+            >{{ entry.durationInSeconds }}s</span>
+
+            <span class="note">{{ entry.note }}</span>
+
+            <span
+              class="billingCategory"
+              style="background-color: {{ entry.billingCategory.color }}"
+              {# data-color="{{ entry.billingCategory.color }}" #}
+            >{{ entry.billingCategory.name }}</span>
           </div>
         {% endfor %}
       {% else %}

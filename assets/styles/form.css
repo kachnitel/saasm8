@@ -1,0 +1,10 @@
+input, select, textarea, button {
+  padding: var(--form-padding);
+  /* width: 100%; */
+  border: 1px solid var(--gray-400);
+  border-radius: 0.25rem;
+
+  &[data-error] {
+    border-color: var(--error-color);
+  }
+}

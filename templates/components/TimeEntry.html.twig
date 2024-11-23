@@ -1,15 +1,18 @@
 {% props timeEntry %}
 
-<div{{ attributes }}>
-    {# show start, ?end, note and category #}
-    <div>
-        <span>🕒 {{ timeEntry.startTime|date('Y-m-d H:i') }}
-        {% if timeEntry.endTime %}
-            <span>🕘 {{ timeEntry.endTime|date('Y-m-d H:i') }}</span>
-        {% else %}
-            <span>🕘 N/A</span>
-        {% endif %}
-        <span>📝 {{ timeEntry.note|default('No notes') }}</span>
-        <span>🏷️ {{ timeEntry.billingCategory.name }}</span>
-    </div>
+<div{{ attributes.defaults({ class: 'timeEntry' }) }}>
+  <span
+    class="duration"
+    title="🕒 {{ timeEntry.startTime|date('H:i:s') }} - {{ timeEntry.endTime|date('H:i:s') }}"
+  >🕒 {{ timeEntry.durationInSeconds }}s</span>
+
+  <span
+    class="billingCategory"
+    style="background-color: {{ timeEntry.billingCategory.color }}"
+    {# data-color="{{ timeEntry.billingCategory.color }}" #}
+  >🏷️ {{ timeEntry.billingCategory.name }}</span>
+
+  {% if timeEntry.note %}
+    <span class="note" title="{{ timeEntry.note }}">📝</span>
+  {% endif %}
 </div>

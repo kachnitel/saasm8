@@ -11,6 +11,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 final class TimeEntryCalendar
 {
     use DefaultActionTrait;
+    use Traits\NewEntryListenerTrait;
 
     #[LiveProp(writable: true)]
     public ?int $year = null;

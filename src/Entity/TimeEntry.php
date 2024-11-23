@@ -32,6 +32,10 @@ class TimeEntry
 
     public function getDurationInSeconds(): int
     {
+        if (null === $this->startTime || null === $this->endTime) {
+            return 0;
+        }
+
         return \DateTimeImmutable::createFromFormat('U', '0')
             ->add($this->getDuration())
             ->getTimestamp();
